@@ -19,7 +19,7 @@ int temperatureSensor1 = A1;
 int temperatureSensor2 = A2;
 
 //Flags for the states of the components and time related variables
-int wireState = 0;
+int wireState = 0
 int timeFirstPress = 0;
 int isPressedButton = 1;
 int wireState1 = 0;
@@ -35,12 +35,12 @@ void checkTempState(int temperatureSensor){
   return;
 }
 
-void togglePower(int timeFirstPress, int isPressedButton, int * wireState, int buttonReadPin, int basePin, int ledPinHigher, int ledPinLower){
+void togglePower(int timeFirstPress, int * isPressedButton, int * wireState, int buttonReadPin, int basePin, int ledPinHigher, int ledPinLower){
   int currentTime = millis();
 
   if(digitalRead(buttonReadPin) == HIGH)
   { 
-    if (isPressedButton == 1){
+    if (*isPressedButton == 1){
       if (*wireState == 2){
         *wireState = 0;
         analogWrite(basePin, 0);
@@ -62,13 +62,13 @@ void togglePower(int timeFirstPress, int isPressedButton, int * wireState, int b
         digitalWrite(ledPinHigher, HIGH);
       }
       
-      isPressedButton = 0;
+      *isPressedButton = 0;
       timeFirstPress = millis();
     }
   }
 
   if (currentTime - timeFirstPress >= 100){
-    isPressedButton=1;
+    *isPressedButton=1;
   }
 }
 
@@ -91,6 +91,16 @@ void setup()
   digitalWrite(wireController, LOW);
   digitalWrite(wireController1, LOW);
   digitalWrite(wireController2, LOW);
+  
+  wireState = 0;
+  timeFirstPress = 0;
+  isPressedButton = 1;
+  wireState1 = 0;
+  timeFirstPress1 = 0;
+  isPressedButton1 = 1;
+  wireState2 = 0;
+  timeFirstPress2 = 0;
+  isPressedButton2 = 1;
 }
 
 void loop()
@@ -99,9 +109,9 @@ void loop()
     float voltage = reading * 5.0;
     voltage /= 1024.0;
 
-    int temp = (voltage - 0.5) * 100 ;
+    int temp = (voltage - 0.5) * 100;
 
-  togglePower(timeFirstPress, isPressedButton, &wireState, buttonReceiver, wireController, ledPinHigher, ledPinLower);
-  togglePower(timeFirstPress1, isPressedButton1, &wireState1, buttonReceiver1, wireController1, ledPinHigher1, ledPinLower1);
-  togglePower(timeFirstPress2, isPressedButton2, &wireState2, buttonReceiver2, wireController2, ledPinHigher2, ledPinLower2);
+  togglePower(timeFirstPress, &isPressedButton, &wireState, buttonReceiver, wireController, ledPinHigher, ledPinLower);
+  togglePower(timeFirstPress1, &isPressedButton1, &wireState1, buttonReceiver1, wireController1, ledPinHigher1, ledPinLower1);
+  togglePower(timeFirstPress2, &isPressedButton2, &wireState2, buttonReceiver2, wireController2, ledPinHigher2, ledPinLower2);
 }
